@@ -1,1 +1,135 @@
-ejemplo
+import pygame
+import sys
+from pygame.locals import *
+import random
+
+alto = 600
+ancho = 1100                                                                             #TAMAÑO DE LA VENTANA
+
+def main():
+    pygame.init()
+    ventanita = pygame.display.set_mode((ancho,alto))                                    #VENTANA
+    pygame.display.set_caption("Las grandes aventuras de Billy, el triangulo volador")
+    
+    superficiesita= ksdjbglfak (hacer superficie para pegar el puntaje al final wacho)
+    
+    rojo = (100,100,100)                                                                 #COLORES
+    azul = (255,255,255)
+    verde = (255,190,10)
+    
+    personaje = pygame.image.load("Bill_Cipher_PNG.webp")                                #PERSONAJE
+    personaje = pygame.transform.scale(personaje,(150,200))
+    mask_personaje = pygame.mask.from_surface(personaje) 
+    personaje_rect = personaje.get_rect()
+    personaje_rect.center = (50,78)
+    
+    
+    superficie2x=100
+    superficie2y=200
+    
+    muro = pygame.image.load("libro.jpeg")                                               #MURO
+    muro = pygame.transform.scale(muro,(95,105))
+    mask_muro = pygame.mask.from_surface(muro)
+    muro_rect = muro.get_rect()
+    muro_rect.center= (superficie2x,superficie2y)
+    
+    
+    fondo = pygame.image.load("fondo.png")                                               #FONDO
+    fondo = pygame.transform.scale(fondo,(1100,600))
+    fondo_rect = fondo.get_rect()
+    fondo_rect= (1,1)
+    
+    puntos=0
+    
+
+    
+    #message = ""
+        
+    while True:
+        pygame.time.Clock().tick(120)
+        
+        fuente1 = pygame.font.Font(None,70)                                                   #TEXTO        
+        over = fuente1.render("GAME OVER", True ,azul)
+        over_rect = over.get_rect()
+        over_rect = (400,250)
+    
+        
+        fuente2 = pygame.font.Font(None,60)                                                   #TEXTO        
+        puntaje = fuente2.render("Libros robados: "+ str(puntos), True ,verde)
+        puntaje_rect = puntaje.get_rect()
+        puntaje_rect = (1,1)
+
+        
+        segundos = pygame.time.get_ticks()//1000                                           #TIEMPO
+        tiempo = fuente1.render("TIEMPO: " + str(segundos), True, rojo)
+        tiempo_rect= tiempo.get_rect()
+        tiempo_rect.center = (850, 30)
+
+        
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        
+        
+        
+        
+        tecla_precionada = pygame.key.get_pressed()                                     #MOVIMIENTO
+        if tecla_precionada[pygame.K_s]:
+            personaje_rect.y +=7
+            
+        if tecla_precionada[pygame.K_d]:
+            personaje_rect.x +=7
+            
+        if tecla_precionada[pygame.K_a]:
+            personaje_rect.x -=7
+            
+        if tecla_precionada[pygame.K_w]:
+            personaje_rect.y -=7
+        
+        if  personaje_rect.bottom >alto:
+            personaje_rect.bottom =alto
+            
+        if  personaje_rect.top <0:
+            personaje_rect.top =0
+            
+        if  personaje_rect.left <0:
+            personaje_rect.left =0
+            
+        if  personaje_rect.right > ancho:
+            personaje_rect.right =ancho
+            
+            
+        offset = (personaje_rect.x - muro_rect.x , personaje_rect.y - muro_rect.y)        #COLISION
+        
+        if mask_personaje.overlap(mask_muro,offset):
+            superficie2x=random.randint(100,640)
+            superficie2y=random.randint(100,640)
+            muro_rect.center= (superficie2x,superficie2y)
+            #pygame.mixer.music.play(1,0,0)
+            puntos+=1
+            puntaje = fuente2.render("Libros robados: "+ str(puntos), True ,verde)
+            
+        
+        if segundos == 3:
+            ventanita.fill((255,0,0))
+            ventanita.blit(over,over_rect)
+            over= (ancho//2,(alto//2))
+            ventanita.blit(puntaje,puntaje_rect)
+            puntaje_rect = (380,400)
+            pygame.display.update()
+            pygame.time.wait(25*150)
+            sys.exit()
+
+        
+        ventanita.blit(fondo,fondo_rect)                                                  #MOSTRAR COSAS
+        ventanita.blit(muro,muro_rect)
+        ventanita.blit(personaje,personaje_rect)
+        ventanita.blit(puntaje,puntaje_rect)
+        ventanita.blit(tiempo,tiempo_rect)
+        
+        
+        
+        pygame.display.update()                                                          #RECARGAR VENTANA
+if __name__=="__main__":
+    main()
